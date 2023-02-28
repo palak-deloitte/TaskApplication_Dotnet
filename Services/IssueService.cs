@@ -94,6 +94,18 @@ public class IssueService : IIssueService
         return issue;
     }
 
+    public List<Issue> GetIssuesByProjectIdOrCreator(int projectId, string assignee)
+    {
+        List<Issue> issue;
+        try {
+            issue = _context.Issues.
+            Where(p => p.Assignee.email == assignee || p.Projects.project_id == projectId).ToList();
+            return issue;
+        } catch (Exception){
+            throw;
+        }
+    }
+
     public List<Issue> SearchIssueByTitleOrDescription(string issue)
     {
         List<Issue> i;

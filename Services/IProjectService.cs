@@ -24,7 +24,7 @@ public interface IProjectService {
 
     // List<Project> SearchByProjectIdOrCreator([FromQuery]int id, [FromQuery]ProjectDTO project);
 
-    Project GetProjectByCreator(string creator);
+    // Project GetProjectByCreator(string creator);
 
 
 

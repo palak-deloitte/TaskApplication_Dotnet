@@ -117,4 +117,17 @@ public class IssueController : ControllerBase {
             return BadRequest();
         }
     }
+
+    [HttpPost]
+    [Route("[action]")]
+    public IActionResult SearchByIdOrCreator(int projectId, string assignee){
+        _logger.LogInformation("Searching by Id or assignee...");
+
+        try {
+            var issue = _issueService.GetIssuesByProjectIdOrCreator(projectId, assignee);
+            return Ok(issue);
+        } catch(Exception){
+            throw;
+        }
+    }
 }

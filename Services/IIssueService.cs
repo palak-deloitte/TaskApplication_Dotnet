@@ -21,5 +21,7 @@ public interface IIssueService {
 
     List<Issue> SearchIssueByTitleOrDescription(string issue);
 
+    List<Issue> GetIssuesByProjectIdOrCreator(int projectId, string creator);
+
 
 }
