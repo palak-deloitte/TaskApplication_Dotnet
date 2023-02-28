@@ -12,17 +12,20 @@ namespace Project_HU.Controllers;
 public class LabelController : ControllerBase {
     
     ILabelService _labelService;
+    private readonly ILogger<IssueController> _logger;
 
-    public LabelController(ILabelService labelService)
+
+    public LabelController(ILabelService labelService, ILogger<IssueController> logger)
     {
         _labelService = labelService;
+        _logger = logger;
     }
 
 
     [HttpPost]
     [Route("[action]")]
-    [Authorize(Roles="admin")]
     public IActionResult AddLabelToIssue(int issueId, int labelId) {
+        _logger.LogInformation("Adding Label to Issue...");
         try {
             var label = _labelService.AddLabelToIssue(issueId, labelId);
             return Ok(label);
@@ -34,6 +37,7 @@ public class LabelController : ControllerBase {
     [HttpDelete]
     [Route("[action]")]
     public IActionResult RemoveLabelFromIssue(int issueId, int labelId){
+        _logger.LogInformation("Removing Label from Issue...");
         try {
             var label = _labelService.RemoveLabel(issueId, labelId);
             return Ok(label);

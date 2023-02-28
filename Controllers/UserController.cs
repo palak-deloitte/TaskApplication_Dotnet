@@ -15,14 +15,19 @@ namespace Project_HU.Controllers;
 public class UserController : ControllerBase {
     IUserService _userService;
 
-    public UserController(IUserService userService)
+    private readonly ILogger<IssueController> _logger;
+
+
+    public UserController(IUserService userService, ILogger<IssueController> logger)
     {
         _userService = userService;
+        _logger = logger;
     }
 
 
     [HttpGet("allUsers")]
     public IActionResult GetAllUsers() {
+        _logger.LogInformation("Getting All Users...");
         try {
             var users = _userService.GetUsers();
             if (users == null) return NotFound();
@@ -35,6 +40,7 @@ public class UserController : ControllerBase {
 
     [HttpGet("getUserById")]
     public IActionResult GetUserById(int id) {
+        _logger.LogInformation("Getting User By Id...");
         try {
             var user = _userService.GetUserById(id);
             return Ok(user);
@@ -45,7 +51,9 @@ public class UserController : ControllerBase {
 
     [HttpPost]
     [Route("[action]")]
+    [Authorize(Roles="admin")]
     public IActionResult SaveUser(UserRequest userRequest) {
+        _logger.LogInformation("Adding a User...");
         try {
             var user = _userService.SaveEmployee(userRequest);
             return Ok(user);
@@ -56,7 +64,9 @@ public class UserController : ControllerBase {
 
     [HttpPost]
     [Route("[action]")]
+    [Authorize(Roles="admin")]
     public IActionResult AssignRole(UserWithRolesDTO userWithRolesDTO) {
+        _logger.LogInformation("Assigning Role to User...");
         try {
             var user = _userService.AssignRole(userWithRolesDTO);
             return Ok(user);
@@ -68,6 +78,7 @@ public class UserController : ControllerBase {
     [HttpGet]
     [Route("[action]")]
     public IActionResult GetProjectsOfUser(int id){
+        _logger.LogInformation("Getting All Projects of a User...");
         try {
             var proj = _userService.GetProjectByUserId(id);
             if (proj == null) return NotFound();
