@@ -106,6 +106,19 @@ public class IssueService : IIssueService
         }
     }
 
+    public List<Issue> GetIssuesByProjectIdAndCreator(int projectId, string assignee)
+    {
+        List<Issue> issue;
+        try {
+            issue = _context.Issues.
+            Where(p => p.Assignee.email == assignee && p.Projects.project_id == projectId).
+            ToList();
+            return issue;
+        } catch (Exception){
+            throw;
+        }
+    }
+
     public List<Issue> SearchIssueByTitleOrDescription(string issue)
     {
         List<Issue> i;
@@ -190,5 +203,16 @@ public class IssueService : IIssueService
         }
 
         return model;
+    }
+
+    public List<Issue> GetIssueByType(int type)
+    {
+        try {
+            List<Issue> issues;
+            issues = _context.Issues.Where(i => i.type == (IssueType)type).ToList();
+            return issues;
+        } catch (Exception) {
+            throw;
+        }
     }
 }

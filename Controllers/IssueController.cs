@@ -118,13 +118,40 @@ public class IssueController : ControllerBase {
         }
     }
 
-    [HttpPost]
+    [HttpGet]
     [Route("[action]")]
-    public IActionResult SearchByIdOrCreator(int projectId, string assignee){
+    public IActionResult SearchByIdOrCreator(int projectId, string assignee=""){
         _logger.LogInformation("Searching by Id or assignee...");
 
         try {
+
             var issue = _issueService.GetIssuesByProjectIdOrCreator(projectId, assignee);
+            return Ok(issue);
+        } catch(Exception){
+            throw;
+        }
+    }
+
+    [HttpGet]
+    [Route("[action]")]
+    public IActionResult SearchByIdAndCreator(int projectId, string assignee){
+        _logger.LogInformation("Searching by Id and assignee...");
+
+        try {
+            var issue = _issueService.GetIssuesByProjectIdAndCreator(projectId, assignee);
+            return Ok(issue);
+        } catch(Exception){
+            throw;
+        }
+    }
+
+    [HttpGet]
+    [Route("[action]")]
+    public IActionResult SearchByType(int type){
+        _logger.LogInformation("Searching by type...");
+
+        try {
+            var issue = _issueService.GetIssueByType(type);
             return Ok(issue);
         } catch(Exception){
             throw;

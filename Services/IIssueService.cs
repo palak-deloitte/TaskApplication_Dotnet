@@ -23,5 +23,11 @@ public interface IIssueService {
 
     List<Issue> GetIssuesByProjectIdOrCreator(int projectId, string creator);
 
+     List<Issue> GetIssuesByProjectIdAndCreator(int projectId, string assignee);
+
+     List<Issue> GetIssueByType(int type);
+
+
+
 
 }
