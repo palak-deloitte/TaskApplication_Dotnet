@@ -17,6 +17,8 @@ builder.Services.AddDbContext<TaskContext>(opts =>
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IIssueService, IssueService>();
+
 
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>

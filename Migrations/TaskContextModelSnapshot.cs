@@ -18,10 +18,53 @@ namespace Project_HU.Migrations
                 .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("Project_HU.Models.Issue", b =>
+                {
+                    b.Property<int>("issue_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Assigneeuser_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Projectsproject_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Reporteruser_id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("type")
+                        .HasColumnType("int");
+
+                    b.HasKey("issue_id");
+
+                    b.HasIndex("Assigneeuser_id");
+
+                    b.HasIndex("Projectsproject_id");
+
+                    b.HasIndex("Reporteruser_id");
+
+                    b.ToTable("Issues");
+                });
+
             modelBuilder.Entity("Project_HU.Models.Project", b =>
                 {
                     b.Property<int>("project_id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Creatoruser_id")
                         .HasColumnType("int");
 
                     b.Property<string>("description")
@@ -29,6 +72,8 @@ namespace Project_HU.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("project_id");
+
+                    b.HasIndex("Creatoruser_id");
 
                     b.ToTable("Projects");
                 });
@@ -71,21 +116,6 @@ namespace Project_HU.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("ProjectUser", b =>
-                {
-                    b.Property<int>("Creatoruser_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Projectsproject_id")
-                        .HasColumnType("int");
-
-                    b.HasKey("Creatoruser_id", "Projectsproject_id");
-
-                    b.HasIndex("Projectsproject_id");
-
-                    b.ToTable("ProjectUser");
-                });
-
             modelBuilder.Entity("UserUserRole", b =>
                 {
                     b.Property<int>("UserRolesrole_id")
@@ -101,19 +131,42 @@ namespace Project_HU.Migrations
                     b.ToTable("UserUserRole");
                 });
 
-            modelBuilder.Entity("ProjectUser", b =>
+            modelBuilder.Entity("Project_HU.Models.Issue", b =>
                 {
-                    b.HasOne("Project_HU.Models.User", null)
+                    b.HasOne("Project_HU.Models.User", "Assignee")
                         .WithMany()
+                        .HasForeignKey("Assigneeuser_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Project_HU.Models.Project", "Projects")
+                        .WithMany("Issues")
+                        .HasForeignKey("Projectsproject_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Project_HU.Models.User", "Reporter")
+                        .WithMany()
+                        .HasForeignKey("Reporteruser_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Assignee");
+
+                    b.Navigation("Projects");
+
+                    b.Navigation("Reporter");
+                });
+
+            modelBuilder.Entity("Project_HU.Models.Project", b =>
+                {
+                    b.HasOne("Project_HU.Models.User", "Creator")
+                        .WithMany("Projects")
                         .HasForeignKey("Creatoruser_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Project_HU.Models.Project", null)
-                        .WithMany()
-                        .HasForeignKey("Projectsproject_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("UserUserRole", b =>
@@ -129,6 +182,16 @@ namespace Project_HU.Migrations
                         .HasForeignKey("Usersuser_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Project_HU.Models.Project", b =>
+                {
+                    b.Navigation("Issues");
+                });
+
+            modelBuilder.Entity("Project_HU.Models.User", b =>
+                {
+                    b.Navigation("Projects");
                 });
 #pragma warning restore 612, 618
         }

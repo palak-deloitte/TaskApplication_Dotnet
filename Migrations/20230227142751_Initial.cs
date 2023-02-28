@@ -47,6 +47,28 @@ namespace Project_HU.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Projects",
+                columns: table => new
+                {
+                    project_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    description = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Creatoruser_id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Projects", x => x.project_id);
+                    table.ForeignKey(
+                        name: "FK_Projects_Users_Creatoruser_id",
+                        column: x => x.Creatoruser_id,
+                        principalTable: "Users",
+                        principalColumn: "user_id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "UserUserRole",
                 columns: table => new
                 {
@@ -72,6 +94,11 @@ namespace Project_HU.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Projects_Creatoruser_id",
+                table: "Projects",
+                column: "Creatoruser_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserUserRole_Usersuser_id",
                 table: "UserUserRole",
                 column: "Usersuser_id");
@@ -79,6 +106,9 @@ namespace Project_HU.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Projects");
+
             migrationBuilder.DropTable(
                 name: "UserUserRole");
 

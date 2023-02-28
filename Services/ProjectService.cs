@@ -12,21 +12,30 @@ public class ProjectService : IProjectService
         _context = context;        
     }
 
-    public ResponseModel AssignProjectCreator(ProjectUserDTO projectUserDTO)
+    public ResponseModel CreateIssue(int projectId, IssueDTO issueDTO)
     {
         ResponseModel model = new ResponseModel();
-        var proj = _context.Projects.Where(a => a.project_id == projectUserDTO.project_id).Include(s => s.Creator).FirstOrDefault();
-
-        var user = _context.Users.Find(projectUserDTO.user_id);
 
         try {
-            proj.Creator.Add(user);
+            Project proj = GetProjectById(projectId);
+            User reporter = _context.Users.Find(issueDTO.reporter_id);
+            User assignee = _context.Users.Find(issueDTO.assignee_id);
+
+            Issue issue = new Issue(){
+                title = issueDTO.title,
+                description = issueDTO.description,
+                type = issueDTO.type,
+                Projects = proj,
+                Assignee = assignee,
+                Reporter = reporter
+            };
+            _context.Add<Issue>(issue);
+            model.Messsage = "Issue Created Successfully under a project";
             _context.SaveChanges();
-            model.Messsage = "Project Creator saved";
             model.IsSuccess = true;
         } catch (Exception e) {
             model.IsSuccess = false;
-            model.Messsage = "Failed to add Creator. Error : " + e.Message;
+            model.Messsage = "Failed to create Issue under a project. Error : " + e.Message;
         }
 
         return model;
@@ -38,8 +47,10 @@ public class ProjectService : IProjectService
         ResponseModel model = new ResponseModel();
 
         try {
+            User user = _context.Users.Find(projectDTO.user_id);
             Project proj = new Project(){
-                description = projectDTO.description
+                description = projectDTO.description,
+                Creator = user
             };
             _context.Add<Project>(proj);
             model.Messsage = "Project Created Successfully";
@@ -50,6 +61,27 @@ public class ProjectService : IProjectService
             model.Messsage = "Failed to create Project. Error : " + e.Message;
         }
 
+        return model;
+    }
+
+    public ResponseModel DeleteIssue(int projectId, int issueId)
+    {
+        ResponseModel model = new ResponseModel();
+        try {
+            Issue _temp = _context.Issues.Find(issueId);
+            if (_temp != null) {
+                _context.Remove < Issue > (_temp);
+                _context.SaveChanges();
+                model.IsSuccess = true;
+                model.Messsage = "Issue Deleted Successfully";
+            } else {
+                model.IsSuccess = false;
+                model.Messsage = "Issue Not Found";
+            }
+        } catch (Exception ex) {
+            model.IsSuccess = false;
+            model.Messsage = "Error : " + ex.Message;
+        }
         return model;
     }
 
@@ -85,6 +117,24 @@ public class ProjectService : IProjectService
         }
         return project;
 
+    }
+
+    public List<Issue> GetIssuesByProjectId(int id)
+    {
+        List<Issue> issue;
+        try {
+            // proj = _context.Projects.Where(a => a.Creator.All(c => c.user_id == id)).ToList();
+            // proj = _context.Projects.Where(a => a.creator_id == id).ToList();
+            issue = _context.Issues.
+            Where(a => a.Projects.project_id == id).
+            Include(i => i.Projects).
+            Include(i => i.Reporter).
+            Include(i => i.Assignee).
+            ToList();
+        } catch (Exception) {
+            throw;
+        }
+        return issue;
     }
 
     public Project GetProjectById(int id)

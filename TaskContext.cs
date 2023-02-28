@@ -10,6 +10,8 @@ public class TaskContext : DbContext
         public DbSet<User> Users { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<Issue> Issues { get; set; }
+
 
 
         public TaskContext(DbContextOptions options):base(options)

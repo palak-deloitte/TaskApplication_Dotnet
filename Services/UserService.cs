@@ -39,7 +39,9 @@ public class UserService : IUserService
     {
         List<Project> proj;
         try {
-            proj = _context.Projects.Where(a => a.Creator.All(c => c.user_id == id)).ToList();
+            // proj = _context.Projects.Where(a => a.Creator.All(c => c.user_id == id)).ToList();
+            // proj = _context.Projects.Where(a => a.creator_id == id).ToList();
+            proj = _context.Projects.Where(a => a.Creator.user_id == id).Include(s => s.Creator).ToList();
         } catch (Exception) {
             throw;
         }
@@ -51,7 +53,7 @@ public class UserService : IUserService
 
         User user;
         try {
-            user = _context.Find < User > (id);
+            user = _context.Users.Where(a => a.user_id == id).Include(s => s.UserRoles).FirstOrDefault();
         } catch (Exception) {
             throw;
         }

@@ -56,17 +56,6 @@ public class ProjectController : ControllerBase {
         }
     }
 
-    [HttpPost]
-    [Route("[action]")]
-    public IActionResult AssigngProjectCreator(ProjectUserDTO projectUserDTO) {
-        try {
-            var proj = _projectService.AssignProjectCreator(projectUserDTO);
-            return Ok(proj);
-        } catch( Exception e){
-            return BadRequest();
-        }
-    }
-
     [HttpDelete]
     [Route("[action]")]
     public IActionResult DeleteProject(int id) {
@@ -85,6 +74,40 @@ public class ProjectController : ControllerBase {
             var proj = _projectService.UpdateProject(id, projectDTO);
             return Ok(proj);
         } catch (Exception){
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("[action]")]
+    public IActionResult GetIssuesOfProject(int id){
+        try {
+            var issue = _projectService.GetIssuesByProjectId(id);
+            if (issue == null) return NotFound();
+            return Ok(issue);
+        } catch (Exception e) {
+            return BadRequest();
+        }
+    }
+
+    [HttpPost]
+    [Route("[action]")]
+    public IActionResult CreateIssue(int projectId, IssueDTO issueDTO) {
+        try {
+            var issue = _projectService.CreateIssue(projectId, issueDTO);
+            return Ok(issue);
+        } catch (Exception) {
+            return BadRequest();
+        }
+    }
+
+    [HttpDelete]
+    [Route("[action]")]
+    public IActionResult DeleteIssue(int projectId, int issueId) {
+        try {
+            var model = _projectService.DeleteIssue(projectId, issueId);
+            return Ok(model);
+        } catch (Exception) {
             return BadRequest();
         }
     }

@@ -10,7 +10,7 @@ using Project_HU;
 namespace Project_HU.Migrations
 {
     [DbContext(typeof(TaskContext))]
-    [Migration("20230223115848_Initial")]
+    [Migration("20230227142751_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,6 +19,26 @@ namespace Project_HU.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("Project_HU.Models.Project", b =>
+                {
+                    b.Property<int>("project_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Creatoruser_id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("project_id");
+
+                    b.HasIndex("Creatoruser_id");
+
+                    b.ToTable("Projects");
+                });
 
             modelBuilder.Entity("Project_HU.Models.User", b =>
                 {
@@ -73,6 +93,17 @@ namespace Project_HU.Migrations
                     b.ToTable("UserUserRole");
                 });
 
+            modelBuilder.Entity("Project_HU.Models.Project", b =>
+                {
+                    b.HasOne("Project_HU.Models.User", "Creator")
+                        .WithMany("Projects")
+                        .HasForeignKey("Creatoruser_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
             modelBuilder.Entity("UserUserRole", b =>
                 {
                     b.HasOne("Project_HU.Models.UserRole", null)
@@ -86,6 +117,11 @@ namespace Project_HU.Migrations
                         .HasForeignKey("Usersuser_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Project_HU.Models.User", b =>
+                {
+                    b.Navigation("Projects");
                 });
 #pragma warning restore 612, 618
         }

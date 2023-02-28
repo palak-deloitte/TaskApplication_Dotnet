@@ -1,7 +1,8 @@
 
 
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+// using System.Text.Json.Serialization;
 
 namespace Project_HU.Models;
 

@@ -10,12 +10,19 @@ public interface IProjectService {
     Project GetProjectById(int id);
 
     ResponseModel CreateProject(ProjectDTO projectDTO);
-
-    ResponseModel AssignProjectCreator(ProjectUserDTO projectUserDTO);
     
     ResponseModel DeleteProject(int projectId);
 
     ResponseModel UpdateProject(int projectId, ProjectDTO projectDTO);
+
+    List<Issue> GetIssuesByProjectId(int id);
+
+    ResponseModel CreateIssue(int projectId, IssueDTO issueDTO);
+
+    ResponseModel DeleteIssue(int projectId, int issue_id);
+
+
+
 
 
 }

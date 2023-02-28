@@ -11,6 +11,9 @@ public class Project{
 
     public string description { get; set; }
 
-    public List<User> Creator { get; set; }
+    public User Creator { get; set; }
+
+    public List<Issue> Issues { get; set; }
+
 
 }
