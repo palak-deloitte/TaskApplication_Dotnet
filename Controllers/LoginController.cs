@@ -4,51 +4,73 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.Extensions.Configuration;  
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 namespace Project_HU.Controllers;
 
-    [ApiController]
-    [Route("api/[controller]")]
-    public class LoginController : ControllerBase
-    {
-        private IConfiguration _config;  
+[ApiController]
+[Route("api/[controller]")]
+public class LoginController : ControllerBase
+{
+    private IConfiguration _config;
 
-        public LoginController(IConfiguration _config)
+    TaskContext _taskContext;
+
+    public LoginController(IConfiguration _config, TaskContext taskContext)
+    {
+        _config = _config;
+        _taskContext = taskContext;
+    }
+    [HttpPost, Route("login")]
+    public IActionResult Login(LoginDTO loginDTO)
+    {
+        try
         {
-            _config= _config;
-        }
-        [HttpPost, Route("login")]
-        public IActionResult Login(LoginDTO loginDTO)
-        {
-            try
+            User user = _taskContext.Users.FirstOrDefault(a => a.username == loginDTO.UserName);
+            if (user == null) return BadRequest();
+            if (user.password == loginDTO.Password)
             {
-                if (string.IsNullOrEmpty(loginDTO.UserName) ||
-                string.IsNullOrEmpty(loginDTO.Password))
-                    return BadRequest("Username and/or Password not specified");
-                if (loginDTO.UserName.Equals("palak") &&
-                loginDTO.Password.Equals("palak@123"))
+
+
+                User u = _taskContext.Users.Include(u => u.UserRoles).FirstOrDefault(a => a.user_id == user.user_id);
+
+                List<Claim> claim = new List<Claim>();
+
+                if (u.UserRoles == null || u.UserRoles.Count == 0)
                 {
-                    var secretKey = new SymmetricSecurityKey
-                    (Encoding.UTF8.GetBytes("Thisismysecretkey"));
-                    var signinCredentials = new SigningCredentials
-                   (secretKey, SecurityAlgorithms.HmacSha256);
-                    var jwtSecurityToken = new JwtSecurityToken(
-                        "https://localhost:7261",  
-                        "https://localhost:7261", 
-                        claims:new List<Claim>(){new Claim("roles","admin")},
-                        expires: DateTime.Now.AddMinutes(10),
-                        signingCredentials: signinCredentials
-                    );
-                    return Ok(new JwtSecurityTokenHandler().
-                    WriteToken(jwtSecurityToken));
+                    return BadRequest("Please add Role");
                 }
+
+                foreach (var temp in u.UserRoles)
+                {
+                    claim.Add(new Claim("roles", temp.role));
+                }
+
+                var secretKey = new SymmetricSecurityKey
+                        (Encoding.UTF8.GetBytes("Thisismysecretkey"));
+                var signinCredentials = new SigningCredentials
+               (secretKey, SecurityAlgorithms.HmacSha256);
+                var jwtSecurityToken = new JwtSecurityToken(
+                    "https://localhost:7261",
+                    "https://localhost:7261",
+                    claims: claim,
+                    expires: DateTime.Now.AddMinutes(10),
+                    signingCredentials: signinCredentials
+                );
+                return Ok(new JwtSecurityTokenHandler().
+                WriteToken(jwtSecurityToken));
+
             }
-            catch
+            else
             {
-                return BadRequest
-                ("An error occurred in generating the token");
+                return BadRequest("Wrong Paasword");
             }
-            return Unauthorized();
+        }
+        catch
+        {
+            return BadRequest
+            ("An error occurred in generating the token");
         }
     }
+}

@@ -111,4 +111,18 @@ public class ProjectController : ControllerBase {
             return BadRequest();
         }
     }
+
+    [HttpPost]
+    [Route("[action]")]
+    public IActionResult SearchByIdOrCreator([FromQuery]int id=0, [FromQuery]ProjectDTO projectDTO=null){
+        if(id != 0){
+            var proj = _projectService.GetProjectById(id);
+            return Ok(proj);
+        }
+        else if(projectDTO != null){
+            var proj = _projectService.GetProjectByCreator(projectDTO);
+            return Ok(proj);
+        }
+        return BadRequest("Enter Correct Value");
+    }
 }

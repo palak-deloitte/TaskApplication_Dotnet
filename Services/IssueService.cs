@@ -69,6 +69,7 @@ public class IssueService : IIssueService
             Include(i => i.Projects).
             Include(i => i.Reporter).
             Include(i => i.Assignee).
+            Include(i => i.Labels).
             ToList();
         } catch (Exception){
             throw;
@@ -85,11 +86,30 @@ public class IssueService : IIssueService
             Include(i => i.Projects).
             Include(i => i.Reporter).
             Include(i => i.Assignee).
+            Include(i => i.Labels).
             FirstOrDefault();
         } catch (Exception) {
             throw;
         }
         return issue;
+    }
+
+    public List<Issue> SearchIssueByTitleOrDescription(string issue)
+    {
+        List<Issue> i;
+        try {
+            i = _context.Issues.
+            Where(a => a.title == issue || a.description == issue).
+            Include(i => i.Projects).
+            Include(i => i.Reporter).
+            Include(i => i.Assignee).
+            Include(i => i.Labels).
+            ToList();
+        } catch (Exception) {
+            throw;
+        }
+        return i;
+
     }
 
     public ResponseModel UpdateAssignee(int issue_id, int user_id)
@@ -143,8 +163,13 @@ public class IssueService : IIssueService
         ResponseModel model = new ResponseModel();
         Issue issue = GetIssueById(issue_id);
         try {
-            issue.status = issue.status + 1;
-            model.Messsage = "Status Updated";
+            if(!(issue.status).Equals(5)){
+                issue.status = issue.status + 1;
+                model.Messsage = "Status Updated";
+            }
+            else {
+                model.Messsage = "Status Already Up to Date";
+            }
             _context.SaveChanges();
             model.IsSuccess = true;
         } catch (Exception e){

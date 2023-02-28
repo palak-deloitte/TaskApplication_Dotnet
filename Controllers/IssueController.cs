@@ -95,4 +95,15 @@ public class IssueController : ControllerBase {
             return BadRequest();
         }
     }
+
+    [HttpGet]
+    [Route("[action]")]
+    public IActionResult SearchIssueByTitleOrDescription(string issue){
+        try {
+            var i = _issueService.SearchIssueByTitleOrDescription(issue);
+            return Ok(i);
+        } catch (Exception) {
+            return BadRequest();
+        }
+    }
 }

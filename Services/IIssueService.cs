@@ -19,5 +19,7 @@ public interface IIssueService {
 
     ResponseModel UpdateAssignee(int issue_id, int user_id);
 
+    List<Issue> SearchIssueByTitleOrDescription(string issue);
+
 
 }

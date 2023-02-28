@@ -43,7 +43,6 @@ public class ProjectService : IProjectService
 
     public ResponseModel CreateProject(ProjectDTO projectDTO)
     {
-
         ResponseModel model = new ResponseModel();
 
         try {
@@ -108,7 +107,6 @@ public class ProjectService : IProjectService
 
     public List<Project> GetAllProjects()
     {
-
         List<Project> project;
         try {
             project = _context.Projects.Include(s => s.Creator).ThenInclude(a => a.UserRoles).ToList();
@@ -123,8 +121,6 @@ public class ProjectService : IProjectService
     {
         List<Issue> issue;
         try {
-            // proj = _context.Projects.Where(a => a.Creator.All(c => c.user_id == id)).ToList();
-            // proj = _context.Projects.Where(a => a.creator_id == id).ToList();
             issue = _context.Issues.
             Where(a => a.Projects.project_id == id).
             Include(i => i.Projects).
@@ -135,6 +131,17 @@ public class ProjectService : IProjectService
             throw;
         }
         return issue;
+    }
+
+    public Project GetProjectByCreator(ProjectDTO projectDTO)
+    {
+        try {
+            Project proj = _context.Projects.Where(p => p.Creator.user_id == projectDTO.user_id).FirstOrDefault();
+            return proj;
+        } catch (Exception){
+            throw;
+        }
+        
     }
 
     public Project GetProjectById(int id)
@@ -155,7 +162,6 @@ public class ProjectService : IProjectService
         try {
             Project _temp = GetProjectById(projectId);
             _temp.description = projectDTO.description;
-            // _context.Add<Project>(_temp);
                 model.Messsage = "Project Updated Successfully";
                 _context.SaveChanges();
                 model.IsSuccess = true;

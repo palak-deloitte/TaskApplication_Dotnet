@@ -29,6 +29,9 @@ public class Issue{
 
     public User Assignee { get; set; }
 
+    public List<Label> Labels { get; set; }
+
+
 
 
 }

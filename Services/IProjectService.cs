@@ -1,5 +1,6 @@
 
 
+using Microsoft.AspNetCore.Mvc;
 using Project_HU.Models;
 
 namespace Project_HU.Services;
@@ -20,6 +21,10 @@ public interface IProjectService {
     ResponseModel CreateIssue(int projectId, IssueDTO issueDTO);
 
     ResponseModel DeleteIssue(int projectId, int issue_id);
+
+    // List<Project> SearchByProjectIdOrCreator([FromQuery]int id, [FromQuery]ProjectDTO project);
+
+    Project GetProjectByCreator(ProjectDTO projectDTO);
 
 
 
