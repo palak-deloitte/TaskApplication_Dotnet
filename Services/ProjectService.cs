@@ -133,10 +133,10 @@ public class ProjectService : IProjectService
         return issue;
     }
 
-    public Project GetProjectByCreator(ProjectDTO projectDTO)
+    public Project GetProjectByCreator(string creator)
     {
         try {
-            Project proj = _context.Projects.Where(p => p.Creator.user_id == projectDTO.user_id).FirstOrDefault();
+            Project proj = _context.Projects.Where(p => p.Creator.email == creator).FirstOrDefault();
             return proj;
         } catch (Exception){
             throw;

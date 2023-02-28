@@ -131,15 +131,15 @@ public class ProjectController : ControllerBase {
 
     [HttpPost]
     [Route("[action]")]
-    public IActionResult SearchByIdOrCreator([FromQuery]int id=0, [FromQuery]ProjectDTO projectDTO=null){
+    public IActionResult SearchByIdOrCreator(int id=0, string creator = "creator"){
         _logger.LogInformation("Searching by Id or Creator...");
 
         if(id != 0){
             var proj = _projectService.GetProjectById(id);
             return Ok(proj);
         }
-        else if(projectDTO != null){
-            var proj = _projectService.GetProjectByCreator(projectDTO);
+        else if(creator != null){
+            var proj = _projectService.GetProjectByCreator(creator);
             return Ok(proj);
         }
         return BadRequest("Enter Correct Value");
